@@ -20,7 +20,7 @@ def test_vector_process():
     df = test_df_process()
     x = df["事件描述"]
     y = df["支撑类型"]
-    x, y = vector_process(x, y, True)
+    x, y = vector_process(x, y)
     print(x.shape, y.shape)
     return x, y
 

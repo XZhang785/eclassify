@@ -21,7 +21,7 @@ def train_dense_model() -> Sequential:
     # 数据向量化
     x = df[FEATURE_COL]
     y = df[LABEL_COL]
-    x, y = vector_process(x, y, True)
+    x, y = vector_process(x, y)
     # 划分训练集和测试集
     train_rate = 0.8
     x_train, x_test, y_train, y_test = split_data(train_rate, x, y)
