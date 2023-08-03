@@ -20,5 +20,3 @@ def test_vector_process():
     x, y = vector_process(x, y, True)
     print(x.shape, y.shape)
     return x, y
-
-

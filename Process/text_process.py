@@ -1,7 +1,7 @@
 import thulac
 import pandas as pd
-import os
 import re
+import os
 from functools import reduce
 from typing import List, Optional
 
@@ -89,7 +89,6 @@ def text_segmentation(text: str) -> str:
     分词后的文本
     """
 
-    # thu = thulac.thulac(seg_only=True, filt=True)  # 进行分词和过滤
     thu = thulac.thulac(seg_only=True)  # 进行分词
     new_text = thu.cut(text, text=True)
     return new_text
@@ -108,7 +107,7 @@ def df_text_segmentation(df: pd.DataFrame, tag_col: str) -> pd.DataFrame:
     --------------------------
     返回处理好的数据(以空格连接分词的文本)
     """
-    # thu = thulac.thulac(seg_only=True, filt=True)  # 进行分词和过滤
+
     thu = thulac.thulac(seg_only=True)  # 进行分词
     df[tag_col] = df[tag_col].apply(lambda x: thu.cut(x, text=True))
     return df
@@ -164,7 +163,7 @@ def remove_df_stopwords(df: pd.DataFrame, file_path: str, tag_col: str) -> pd.Da
     return df
 
 
-def df_text_process(df: pd.DataFrame, file_path: str, tag_col: str) -> pd.DataFrame:
+def df_text_process(df: pd.DataFrame, stopword_path: str, tag_col: str) -> pd.DataFrame:
     """
     对文本数据进行预处理
 
@@ -182,7 +181,7 @@ def df_text_process(df: pd.DataFrame, file_path: str, tag_col: str) -> pd.DataFr
     df = df.drop_duplicates()
     df[tag_col] = df[tag_col].apply(lambda x: text_replace(x))
     df = df_text_segmentation(df, tag_col)
-    df = remove_df_stopwords(df, file_path, tag_col)
+    df = remove_df_stopwords(df, stopword_path, tag_col)
     return df
 
 

@@ -1,5 +1,3 @@
-import pandas as pd
-
 from Process.text_process import *
 from Process.vector_process import *
 
@@ -16,8 +14,8 @@ def concat_demo():
 
 def test_text_replace():
     test_data = [
-        "客户反馈弹性公网IP36.139.122.198主机网络异常，随机性出现网络波动。通过https://ping.chinaz.com/ ，通过多次通过超级ping查询国内节点，出现随机性地区延迟很高，时好时坏"
-        , "客户反馈36.139.123.40云主机VNC无法连接，远程无法连接",
+        "客户反馈弹性公网IP36.139.122.198主机网络异常，随机性出现网络波动。通过https://ping.chinaz.com/ ，通过多次通过超级ping查询国内节点，出现随机性地区延迟很高，时好时坏",
+        "客户反馈36.139.123.40云主机VNC无法连接，远程无法连接",
         "在重庆节点下，多台云主机出现ping超时，如36.133.109.229 36.133.114.246，mtr信息见附件",
         "36.139.122.198"]
     for text in test_data:
