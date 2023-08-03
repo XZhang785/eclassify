@@ -1,10 +1,10 @@
 import pandas as pd
 
-from Process.text_process import concat_data, text_replace, df_text_process, text_process
+from Process.text_process import *
+from Process.vector_process import *
 
 
 def concat_demo():
-    # dir_path = r"C:\Users\Xzhang\Desktop\移动课题\Data\省公司工单"
     dir_path = r"C:\Users\Xzhang\eclassfy\Data"
     tag_cols = ["事件描述", "支撑类型"]
     save_path = r"..\Data\Origin_concat_data.xlsx"
@@ -26,13 +26,14 @@ def test_text_replace():
         print("\n")
 
 
-def test_df_process():
+def test_df_process() -> pd.DataFrame:
     filepath = r"..\Data\Origin_concat_data.xlsx"
     df = pd.read_excel(filepath)
     stopwords_file_path = r"C:\Users\Xzhang\Desktop\移动课题\stopwords\cn_stopwords.txt"
     tag_col = "事件描述"
     df = df_text_process(df, stopwords_file_path, tag_col)
     print(df.head(5))
+    return df
 
 
 def test_text_process():

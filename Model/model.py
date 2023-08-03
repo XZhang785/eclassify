@@ -1,0 +1,92 @@
+# -*- coding: utf-8 -*-
+import pickle
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from keras .models import Sequential
+from keras.layers import Dense
+from keras.layers import Flatten
+from keras.layers import Embedding
+from keras.layers.convolutional import Conv1D
+from keras.layers.convolutional import MaxPooling1D
+from keras.callbacks import History
+from sklearn.model_selection import train_test_split
+from typing import Tuple
+
+
+def split_data(train_rate: float, x: pd.Series, y: pd.Series) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """
+    对数据进行切分并混淆
+    Parameters:
+        train_rate: 训练数据的比率
+        x: 数据
+        y: 标签
+
+    Returns:
+
+    """
+    x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=train_rate, random_state=42)
+    return x_train, x_test, y_train, y_test
+
+
+def build_dense_model(vocab_size: int, embedding_dim: int, input_length: int) -> Sequential:
+    """
+    构建全连接网络
+    Parameters:
+        vocab_size: 词袋大小
+        embedding_dim: 嵌入的维度
+        input_length: 输入的维度
+
+    Returns:
+    构建好的模型，并在命令行输出其参数
+    """
+    model = Sequential()
+    model.add(Embedding(input_dim=vocab_size, output_dim=embedding_dim, input_length=input_length))
+    model.add(Conv1D(filters=32, kernel_size=5, activation='relu'))
+    model.add(MaxPooling1D(pool_size=2))
+    model.add(Flatten())
+    model.add(Dense(16, activation='relu'))
+    model.add(Dense(4, activation='softmax'))
+    model.summary()
+    return model
+
+
+def train_model(model: Sequential, x_train: np.ndarray, y_train: np.ndarray, path: str) -> Tuple[Sequential, History]:
+    """
+    训练模型并绘制出迭代过程
+    Parameters:
+        model: 模型
+        x_train: 训练数据
+        y_train: 训练标签
+        path: 模型保存的路径
+    Returns:
+    返回模型
+    """
+    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    history = model.fit(x_train, y_train, epochs=50, verbose=2, validation_split=0.1)
+
+    with open(path, 'wb') as handle:
+        pickle.dump(model, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+    return model, history
+
+
+def plot_train(history: History, path: str) -> None:
+    plt.figure(figsize=(14, 4))
+    plt.subplot(1, 2, 1)
+    plt.plot(history.history['loss'], 'bo', label='Training loss')
+    plt.plot(history.history['val_loss'], color='b', label='Validation loss')
+    plt.title('Training and Validation Loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+
+    plt.subplot(1, 2, 2)
+    plt.plot(history.history['accuracy'], 'o', label='Accuracy', c='orange')
+    plt.plot(history.history['val_accuracy'], label='Validation accuracy', c='orange')
+    plt.title('Training and Validation Accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.savefig(path)
