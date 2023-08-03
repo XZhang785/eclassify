@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 import pickle
-
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-from keras .models import Sequential
+from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import Flatten
 from keras.layers import Embedding
@@ -15,7 +13,8 @@ from sklearn.model_selection import train_test_split
 from typing import Tuple
 
 
-def split_data(train_rate: float, x: pd.Series, y: pd.Series) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+def split_data(train_rate: float, x: np.ndarray, y: np.ndarray) -> \
+        Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
     对数据进行切分并混淆
     Parameters:
@@ -52,7 +51,7 @@ def build_dense_model(vocab_size: int, embedding_dim: int, input_length: int) ->
     return model
 
 
-def train_model(model: Sequential, x_train: np.ndarray, y_train: np.ndarray, path: str) -> Tuple[Sequential, History]:
+def model_iter(model: Sequential, x_train: np.ndarray, y_train: np.ndarray, path: str) -> Tuple[Sequential, History]:
     """
     训练模型并绘制出迭代过程
     Parameters:
@@ -72,7 +71,16 @@ def train_model(model: Sequential, x_train: np.ndarray, y_train: np.ndarray, pat
     return model, history
 
 
-def plot_train(history: History, path: str) -> None:
+def plot_iter(history: History, path: str) -> None:
+    """
+    绘制迭代过程中，训练集与验证集的准确率与误差
+    Parameters:
+        history: 迭代记录
+        path: 绘制图片保存的位置
+
+    Returns:
+
+    """
     plt.figure(figsize=(14, 4))
     plt.subplot(1, 2, 1)
     plt.plot(history.history['loss'], 'bo', label='Training loss')
