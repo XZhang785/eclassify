@@ -108,29 +108,38 @@ def train_label_encoder(labels: np.ndarray, path: str) -> OneHotEncoder:
     return encoder
 
 
-def vector_process(x: pd.Series, y: pd.Series, is_train: bool) -> Tuple[np.ndarray, np.ndarray]:
+def vector_process(x: pd.Series, y: pd.Series) -> Tuple[np.ndarray, np.ndarray]:
     """
     对数据进行向量化处理
     Parameters:
-        x: 特征数据
+        x: 经过预处理后的文本数据
         y: 标签数据
-        is_train: 是否为训练
 
     Returns:
     返回向量化后的特征和标签
     """
     y = y.to_numpy().reshape(-1, 1)
-    if is_train:
-        max_length = cmp_max_size(x)
-        tokenizer = train_tokenizer(x)
-        label_encoder = train_label_encoder(y, LABEL_ENCODER_PATH)
-        x = transform_sequence(x, tokenizer, max_length)
-        y = label_encoder.transform(y)
-        return x, y
-    else:
-        max_length = load_model_or_data(MAX_LENGTH_PATH)
-        tokenizer = load_model_or_data(TOKENIZER_PATH)
-        label_encoder = load_model_or_data(LABEL_ENCODER_PATH)
-        x = transform_sequence(x, tokenizer, max_length)
-        y = label_encoder.transform(y)
-        return x, y
+    max_length = cmp_max_size(x)
+    tokenizer = train_tokenizer(x)
+    label_encoder = train_label_encoder(y, LABEL_ENCODER_PATH)
+    x = transform_sequence(x, tokenizer, max_length)
+    y = label_encoder.transform(y)
+    return x, y
+
+
+def text2vec(text: str, tokenizer: Tokenizer, max_length: int) -> np.ndarray:
+    """
+    将文本转为向量
+    Parameters:
+        text: 经过预处理后的文本
+        tokenizer: 预训练好的标记模型
+        max_length: 向量最大长度
+    Returns:
+    文本数据转化出的向量
+    """
+
+    x = pd.Series(text)
+    x = transform_sequence(x, tokenizer, max_length)
+    return x
+
+
