@@ -42,11 +42,11 @@ def test_model():
     vocab_size = len(tokenizer.word_index) + 1
     embedding_dim = 100
     model = build_dense_model(vocab_size, embedding_dim, max_length)
-    model_path = "../Data/dense_model.pickle"
+    model_path = "../Data/dense_model"
     model, history = model_iter(model, x_train, y_train, model_path)
     picture_path = "../Data/dense_model_metrics.png"
     plot_iter(history, picture_path)
 
 
 def test_train():
-    model = train_dense_model()
+    train_dense_model()

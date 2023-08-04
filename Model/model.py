@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 from keras.models import Sequential
@@ -64,10 +63,7 @@ def model_iter(model: Sequential, x_train: np.ndarray, y_train: np.ndarray, path
     """
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     history = model.fit(x_train, y_train, epochs=50, verbose=2, validation_split=0.1)
-
-    with open(path, 'wb') as handle:
-        pickle.dump(model, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
+    model.save(path)
     return model, history
 
 

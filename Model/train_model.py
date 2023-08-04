@@ -28,7 +28,7 @@ def train_dense_model() -> Sequential:
     # 训练模型
     max_length, vocab_size = get_length_and_vocab_size()
     model = build_dense_model(vocab_size, EMBEDDING_DIM, max_length)
-    model_path = "../Data/dense_model.pickle"
+    model_path = "../Data/dense_model"
     model, history = model_iter(model, x_train, y_train, model_path)
     picture_path = "../Data/train_metrics.png"
     # 绘制图像

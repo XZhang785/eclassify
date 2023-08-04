@@ -141,5 +141,3 @@ def text2vec(text: str, tokenizer: Tokenizer, max_length: int) -> np.ndarray:
     x = pd.Series(text)
     x = transform_sequence(x, tokenizer, max_length)
     return x
-
-
