@@ -202,3 +202,15 @@ def text_process(text: str, file_path: str) -> str:
     custom_stopwords = load_custom_stopwords(file_path)
     new_text = remove_text_stopwords(new_text, custom_stopwords)
     return new_text
+
+
+def recover_text(text: str) -> str:
+    """
+    对处理后的文本进行复原，只能进行初略的复原
+    Parameters:
+        text: 处理后的文本（以空格间隔）
+
+    Returns:
+    返回修复的文本
+    """
+    return "".join(text.split())
