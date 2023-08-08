@@ -2,12 +2,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import Flatten
-from keras.layers import Embedding
+from keras.layers import Dense, Flatten, Embedding, Bidirectional, LSTM, SpatialDropout1D
 from keras.layers.convolutional import Conv1D
 from keras.layers.convolutional import MaxPooling1D
-from keras.callbacks import History
+from keras.callbacks import History, ReduceLROnPlateau
 from sklearn.model_selection import train_test_split
 from typing import Tuple
 
@@ -26,6 +24,19 @@ def split_data(train_rate: float, x: np.ndarray, y: np.ndarray) -> \
     """
     x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=train_rate, random_state=42)
     return x_train, x_test, y_train, y_test
+
+
+def build_lstm_model(vocab_size: int, embedding_dim: int, input_length: int) -> Sequential:
+    model = Sequential()
+    model.add(Embedding(input_dim=vocab_size, output_dim=embedding_dim, input_length=input_length))
+    model.add(SpatialDropout1D(0.2))
+    model.add(Conv1D(filters=16, kernel_size=5, activation='relu'))
+    model.add(Bidirectional(LSTM(16, dropout=0.2, recurrent_dropout=0.2)))
+    # model.add(Dense(64, activation='relu'))
+    # model.add(Dropout(0.5))
+    model.add(Dense(4, activation='softmax'))
+    model.summary()
+    return model
 
 
 def build_dense_model(vocab_size: int, embedding_dim: int, input_length: int) -> Sequential:
@@ -62,7 +73,8 @@ def model_iter(model: Sequential, x_train: np.ndarray, y_train: np.ndarray, path
     返回模型
     """
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-    history = model.fit(x_train, y_train, epochs=50, verbose=2, validation_split=0.1)
+    reduce_lr = ReduceLROnPlateau(monitor='val_accuracy', patience=3, factor=0.1, min_lr=0.0001, verbose=2)
+    history = model.fit(x_train, y_train, epochs=50, verbose=2, validation_split=0.1, callbacks=reduce_lr)
     model.save(path)
     return model, history
 
