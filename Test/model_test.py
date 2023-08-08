@@ -2,7 +2,7 @@
 from Model.model import *
 from Process.text_process import *
 from Process.vector_process import *
-from Model.train_model import train_dense_model
+from Model.train_model import train_model, get_error_data, get_train_test
 
 STOPWORD_FILE_PATH = "../Data/cn_stopwords.txt"
 DATA_PATH = r"..\Data\Origin_concat_data.xlsx"
@@ -33,20 +33,18 @@ def test_split():
     return x_train, x_test, y_train, y_test
 
 
-def test_model():
-    max_length_path = "../Data/maxsize.pickle"
-    tokenizer_path = "../Data/tokenizer.pickle"
-    x_train, x_test, y_train, y_test = test_split()
-    tokenizer = load_model_or_data(tokenizer_path)
-    max_length = load_model_or_data(max_length_path)
-    vocab_size = len(tokenizer.word_index) + 1
-    embedding_dim = 100
-    model = build_dense_model(vocab_size, embedding_dim, max_length)
+def test_dense_model():
+    # 训练全连接层模型
+    train_model(build_dense_model, "dense_model")
+
+
+def test_lstm_model():
+    # 训练LSTM模型
+    train_model(build_lstm_model, "lstm_model")
+
+
+def test_get_error_data():
     model_path = "../Data/dense_model"
-    model, history = model_iter(model, x_train, y_train, model_path)
-    picture_path = "../Data/dense_model_metrics.png"
-    plot_iter(history, picture_path)
-
-
-def test_train():
-    train_dense_model()
+    model_name = "dense_model"
+    x_train, x_test, y_train, y_test = get_train_test()
+    get_error_data(model_path, x_test, y_test, model_name)
