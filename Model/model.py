@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from keras.models import Sequential
-from keras.layers import Dense, Flatten, Embedding, Bidirectional, LSTM, SpatialDropout1D
+from keras.layers import Dense, Flatten, Embedding, Bidirectional, Dropout, LSTM, SpatialDropout1D
 from keras.layers.convolutional import Conv1D
 from keras.layers.convolutional import MaxPooling1D
 from keras.callbacks import History, ReduceLROnPlateau
@@ -32,14 +32,14 @@ def build_lstm_model(vocab_size: int, embedding_dim: int, input_length: int) -> 
     model.add(SpatialDropout1D(0.2))
     model.add(Conv1D(filters=16, kernel_size=5, activation='relu'))
     model.add(Bidirectional(LSTM(16, dropout=0.2, recurrent_dropout=0.2)))
-    # model.add(Dense(64, activation='relu'))
-    # model.add(Dropout(0.5))
+    model.add(Dense(16, activation='relu'))
+    model.add(Dropout(0.5))
     model.add(Dense(4, activation='softmax'))
     model.summary()
     return model
 
 
-def build_dense_model(vocab_size: int, embedding_dim: int, input_length: int) -> Sequential:
+def build_cnn_model(vocab_size: int, embedding_dim: int, input_length: int) -> Sequential:
     """
     构建全连接网络
     Parameters:

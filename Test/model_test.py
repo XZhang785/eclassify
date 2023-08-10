@@ -33,9 +33,9 @@ def test_split():
     return x_train, x_test, y_train, y_test
 
 
-def test_dense_model():
+def test_cnn_model():
     # 训练全连接层模型
-    train_model(build_dense_model, "dense_model")
+    train_model(build_cnn_model, "dense_model")
 
 
 def test_lstm_model():
