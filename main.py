@@ -4,7 +4,7 @@ from keras.models import load_model
 from Process import *
 
 STOPWORDS_PATH = "Data/cn_stopwords.txt"
-MODEL_PATH = "Data/dense_model"
+MODEL_PATH = "Data/textcnn_model"
 TOKENIZER_PATH = "Data/tokenizer.pickle"
 MAX_LENGTH_PATH = "Data/maxsize.pickle"
 LABEL_ENCODER_PATH = "Data/label_encoder.pickle"

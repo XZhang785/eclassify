@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import matplotlib.pyplot as plt
-from keras.models import Sequential
-from keras.layers import Dense, Flatten, Embedding, Bidirectional, Dropout, LSTM, SpatialDropout1D
-from keras.layers.convolutional import Conv1D
-from keras.layers.convolutional import MaxPooling1D
-from keras.callbacks import History, ReduceLROnPlateau
+from keras.models import Sequential, Model
+from keras.layers import Dense, Flatten, Embedding, Bidirectional, Concatenate, LSTM, Input
+from keras.layers import Dropout, SpatialDropout1D, Reshape
+from keras.layers.convolutional import Conv1D, Conv2D
+from keras.layers.convolutional import MaxPooling1D, MaxPooling2D
+from keras.callbacks import History, ReduceLROnPlateau, ModelCheckpoint
 from sklearn.model_selection import train_test_split
 from typing import Tuple
 
@@ -24,6 +25,29 @@ def split_data(train_rate: float, x: np.ndarray, y: np.ndarray) -> \
     """
     x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=train_rate, random_state=42)
     return x_train, x_test, y_train, y_test
+
+
+def build_textcnn_model(vocab_size: int, embedding_dim: int, input_length: int) -> Sequential:
+    inp = Input(shape=(input_length,))
+    x = Embedding(input_dim=vocab_size, output_dim=embedding_dim, input_length=input_length)(inp)
+    x = SpatialDropout1D(0.4)(x)
+    x = Reshape((input_length, embedding_dim, 1))(x)
+    filter_sizes = [1, 2, 4, 5]
+    conv_list = []
+    num_filters = 16
+    for filter_size in filter_sizes:
+        conv = Conv2D(num_filters, kernel_size=(filter_size, embedding_dim), kernel_initializer='normal',
+                      activation='relu')(x)
+        max_pool = MaxPooling2D(pool_size=(input_length - filter_size + 1, 1))(conv)
+        conv_list.append(max_pool)
+    z = Concatenate(axis=1)(conv_list)
+    z = Flatten()(z)
+    z = Dropout(0.4)(z)
+    output = Dense(4, activation="sigmoid")(z)
+
+    model = Model(inputs=inp, outputs=output)
+    model.summary()
+    return model
 
 
 def build_lstm_model(vocab_size: int, embedding_dim: int, input_length: int) -> Sequential:
@@ -74,8 +98,8 @@ def model_iter(model: Sequential, x_train: np.ndarray, y_train: np.ndarray, path
     """
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     reduce_lr = ReduceLROnPlateau(monitor='val_accuracy', patience=3, factor=0.1, min_lr=0.0001, verbose=2)
-    history = model.fit(x_train, y_train, epochs=50, verbose=2, validation_split=0.1, callbacks=reduce_lr)
-    model.save(path)
+    checkpoint = ModelCheckpoint(filepath=path, monitor='val_accuracy', verbose=1, save_best_only=True)
+    history = model.fit(x_train, y_train, epochs=50, verbose=2, validation_split=0.1, callbacks=[reduce_lr, checkpoint])
     return model, history
 
 

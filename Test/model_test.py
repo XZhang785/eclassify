@@ -38,6 +38,10 @@ def test_cnn_model():
     train_model(build_cnn_model, "dense_model")
 
 
+def test_textcnn_model():
+    train_model(build_textcnn_model, "textcnn_model")
+
+
 def test_lstm_model():
     # 训练LSTM模型
     train_model(build_lstm_model, "lstm_model")
